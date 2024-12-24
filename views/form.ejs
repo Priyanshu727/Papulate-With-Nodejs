@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Item Form</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 min-h-screen flex flex-col">
+  <div id="header" class="mb-8"><%- include("../partials/header.ejs") -%></div>
+  <div class="flex justify-center items-center flex-grow">
+    <form id="addItemForm" class="bg-white shadow-lg border border-gray-300 p-10 rounded-xl" action="/addProduct"
+      method="post" enctype="multipart/form-data">
+      <div class="form-group mb-6">
+        <label for="title" class="block text-gray-700 font-bold mb-2">Title</label>
+        <input type="text" class="form-control w-full p-3 border rounded" id="title" name="title" required />
+      </div>
+      <div class="form-group mb-6">
+        <label for="category" class="block text-gray-700 font-bold mb-2">Category</label>
+        <select id="SelectCategory" class="form-control w-full p-3 border rounded" name="category" required>
+          <option value="" disabled selected>Select Category</option>
+          <option value="Fashion">Fashion</option>
+          <option value="Electronics">Electronics</option>
+        </select>
+      </div>
+      <div class="form-group mb-6" id="subCategory">
+        <label for="subcategory" class="block text-gray-700 font-bold mb-2">SubCategory</label>
+        <select class="form-control w-full p-3 border rounded" id="subcategory" name="subcategory" required>
+          <option value="" disabled selected>Select SubCategory</option>
+        </select>
+      </div>
+      <div class="form-group mb-6" id="extraCategory">
+        <label for="extracategory" class="block text-gray-700 font-bold mb-2">ExtraCategory</label>
+        <select class="form-control w-full p-3 border rounded" id="extracategory" name="extracategory" required>
+          <option value="" disabled selected>Select ExtraCategory</option>
+        </select>
+      </div>
+      <div class="form-group mb-6">
+        <label for="price" class="block text-gray-700 font-bold mb-2">Price</label>
+        <input type="number" class="form-control w-full p-3 border rounded" id="price" name="price" required />
+      </div>
+      <div class="form-group mb-6">
+        <label for="discount" class="block text-gray-700 font-bold mb-2">Discount (%)</label>
+        <input type="number" step="0.01" class="form-control w-full p-3 border rounded" id="discount" name="discount" />
+      </div>
+      <div class="form-group mb-6">
+        <label for="file" class="block text-gray-700 font-bold mb-2">Upload Image</label>
+        <input type="file" class="form-control w-full p-3 border rounded" id="file" name="image" accept="image/*"
+          required />
+      </div>
+      <button type="submit"
+        class="bg-blue-500 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition duration-300">Submit</button>
+    </form>
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const subCategory = {
+        fashion: ["Clothing", "Shoes", "Accessories"],
+        electronics: ["Mobile Phones", "Laptops", "Cameras", "Televisions"]
+      };
+
+      const extraCategory = {
+        clothing: ["T-Shirts", "Jeans", "Jackets"],
+        shoes: ["Sneakers", "Boots", "Sandals"],
+        accessories: ["Watches", "Bags", "Jewelry"],
+        mobile_phones: ["Smartphones", "Feature Phones"],
+        laptops: ["Gaming Laptops", "Ultrabooks", "2-in-1 Laptops"],
+        cameras: ["DSLR", "Mirrorless", "Point and Shoot"],
+        televisions: ["LED", "OLED", "QLED"]
+      };
+
+      const category = document.getElementById("SelectCategory");
+      const sub = document.getElementById("subcategory");
+      const subshow = document.getElementById("subCategory");
+      const extra = document.getElementById("extracategory");
+      const extrashow = document.getElementById("extraCategory");
+
+      category.addEventListener("change", () => {
+        const selectedCategory = category.value.toLowerCase();
+        subshow.style.display = "block";
+        console.log("Selected Category:", selectedCategory);
+
+        let options = '<option value="" disabled selected>Select SubCategory</option>';
+        if (subCategory[selectedCategory]) {
+          subCategory[selectedCategory].forEach(ele => {
+            options += `<option value="${ele.toLowerCase().replace(/ /g, "_")}">${ele}</option>`;
+          });
+        }
+        sub.innerHTML = options;
+        extra.innerHTML = '<option value="" disabled selected>Select ExtraCategory</option>';
+      });
+
+      sub.addEventListener("change", () => {
+        const selectedSubCategory = sub.value.toLowerCase();
+        extrashow.style.display = "block";
+        console.log("Selected SubCategory:", selectedSubCategory);
+
+        let extraOptions = '<option value="" disabled selected>Select ExtraCategory</option>';
+        if (extraCategory[selectedSubCategory]) {
+          extraCategory[selectedSubCategory].forEach(ele => {
+            extraOptions += `<option value="${ele.toLowerCase().replace(/ /g, "_")}">${ele}</option>`;
+          });
+        }
+        extra.innerHTML = extraOptions;
+      });
+
+      // Form submission handler to ensure all required fields are focusable
+      document.getElementById('addItemForm').addEventListener('submit', (e) => {
+        const requiredFields = document.querySelectorAll('[required]');
+        for (let field of requiredFields) {
+          if (!field.value) {
+            field.removeAttribute('required');
+          }
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
